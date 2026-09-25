@@ -1,6 +1,6 @@
 # ChinaGrowth
 
-Exploring the causes of China's growth trajectory with the textbook Solow model. Three interactive charts, each a single
+Exploring the causes of China's growth trajectory with the textbook Solow model. Four interactive charts, each a single
 self-contained HTML file built with the `econ-chart-style` chart engine (click a country or legend entry to highlight it;
 each page can also download a PNG).
 
@@ -11,9 +11,11 @@ each page can also download a PNG).
 | 1 | China's growth slowed as incomes rose, as is standard, but is still ahead of average | [china-growth-vs-income.html](https://econchrisclarke.github.io/ChinaGrowth/china-growth-vs-income.html) | [folder](1-growth-vs-income/) |
 | 2 | At the same capital per worker, China produces about a quarter less than the typical peer | [solow-capital-vs-output.html](https://econchrisclarke.github.io/ChinaGrowth/solow-capital-vs-output.html) | [folder](2-solow-capital-vs-output/) |
 | 3 | At each income level China outgrows its peers, and most of the gap is faster capital accumulation | [growth-accounting-by-income.html](https://econchrisclarke.github.io/ChinaGrowth/growth-accounting-by-income.html) | [folder](3-growth-accounting-by-income/) |
+| 4 | With exchange rate dollars, US economy is bigger. With PPP adjusted dollars, China is | [china-us-gdp-ppp-vs-fx.html](https://econchrisclarke.github.io/ChinaGrowth/china-us-gdp-ppp-vs-fx.html) | [folder](4-gdp-ppp-vs-exchange-rate/) |
 
 The HTML files are also in the repository root: [china-growth-vs-income.html](china-growth-vs-income.html),
-[solow-capital-vs-output.html](solow-capital-vs-output.html), [growth-accounting-by-income.html](growth-accounting-by-income.html).
+[solow-capital-vs-output.html](solow-capital-vs-output.html), [growth-accounting-by-income.html](growth-accounting-by-income.html),
+[china-us-gdp-ppp-vs-fx.html](china-us-gdp-ppp-vs-fx.html).
 (The live links work once GitHub Pages is enabled for the `main` branch.)
 
 ## The argument in three steps
@@ -80,21 +82,29 @@ Caveats:
 - **Selection.** All peers eventually became rich, which biases their growth upward at lower incomes.
 - **The residual is a catch-all.** It includes technology, human capital, hours, misallocation, quality change and measurement error.
 
+## 4. China and US GDP: exchange rates vs PPP (World Bank)
+
+- **Data:** World Bank, World Development Indicators, 2025: GDP in current US$ (`NY.GDP.MKTP.CD`) and GDP, PPP in current international $ (`NY.GDP.MKTP.PP.CD`), fetched from the World Bank API (last updated 2026-07-13).
+- **Result:** at market exchange rates China's GDP is $19.5 trillion against $30.8 trillion for the US. At PPP it is $41.3 trillion, about a third larger than the US.
+- **Caveat:** the US is the base country for PPP, so its two figures are identical by construction.
+- Built with `tools/chart-template-barnames.html`, a newer version of the chart engine that can write series names inside the bars (`barNames`).
+
 ## Repository layout
 
 ```
 china-growth-vs-income.html           chart 1 (live, self-contained)
 solow-capital-vs-output.html          chart 2
 growth-accounting-by-income.html      chart 3
+china-us-gdp-ppp-vs-fx.html           chart 4
 data/                                 raw source data (Maddison via OWID; PWT 11.0 workbook)
-tools/                                the chart builder, template and logo used to build every page
+tools/                                the chart builder, templates and logo used to build every page
 <n>-<chart>/scripts/                  the scripts that compute each chart's numbers and write its config
 <n>-<chart>/data/                     derived data and the chart configuration (JSON)
 ```
 
 ## Reproducing a chart
 
-Requires Python with `pandas`, `numpy` and `openpyxl`. Reading the PWT workbook takes about a minute the first time.
+Chart 4 needs only the Python standard library and network access to the World Bank API. The others require Python with `pandas`, `numpy` and `openpyxl`. Reading the PWT workbook takes about a minute the first time.
 From the repository root:
 
 ```bash
@@ -109,4 +119,8 @@ python tools/build_chart.py --config 2-solow-capital-vs-output/data/chart_emp.js
 # 3. growth accounting by income level
 (cd 3-growth-accounting-by-income/scripts && python growth_accounting_by_income.py)
 python tools/build_chart.py --config 3-growth-accounting-by-income/data/chart_ga_by_income.json --template tools/chart-template.html --out growth-accounting-by-income.html
+
+# 4. China vs US GDP, exchange rates vs PPP
+(cd 4-gdp-ppp-vs-exchange-rate/scripts && python mkchart_gdp.py)
+python tools/build_chart.py --config 4-gdp-ppp-vs-exchange-rate/data/chart_gdp.json --template tools/chart-template-barnames.html --out china-us-gdp-ppp-vs-fx.html
 ```

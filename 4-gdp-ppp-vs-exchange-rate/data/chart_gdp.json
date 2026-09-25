@@ -1,0 +1,37 @@
+{
+  "type": "column",
+  "headline": "With exchange rate dollars, US economy is bigger. With PPP adjusted dollars, China is",
+  "subhead": "GDP in 2025, trillions of US dollars (exchange rate) and international dollars (PPP)",
+  "source": "World Bank, World Development Indicators (NY.GDP.MKTP.CD; NY.GDP.MKTP.PP.CD)",
+  "sourceUrl": "https://data.worldbank.org/indicator/NY.GDP.MKTP.PP.CD?locations=CN-US",
+  "note": "Exchange-rate GDP converts at market exchange rates. PPP GDP converts at purchasing power parity, adjusting for price levels; the US is the PPP base, so its two figures are identical.",
+  "handle": "@EconChrisClarke",
+  "xType": "category",
+  "format": {
+    "prefix": "$",
+    "suffix": "T",
+    "decimals": 1
+  },
+  "categories": [
+    "Exchange rate",
+    "PPP"
+  ],
+  "barNames": true,
+  "valueLabels": true,
+  "series": [
+    {
+      "name": "China",
+      "data": [
+        19.5,
+        41.3
+      ]
+    },
+    {
+      "name": "U.S.",
+      "data": [
+        30.8,
+        30.8
+      ]
+    }
+  ]
+}
