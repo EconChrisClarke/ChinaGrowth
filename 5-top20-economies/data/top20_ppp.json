@@ -1,0 +1,72 @@
+{
+  "source": "World Bank, World Development Indicators (NY.GDP.MKTP.PP.CD)",
+  "handle": "@EconChrisClarke",
+  "xType": "category",
+  "type": "bar",
+  "format": {
+    "prefix": "$",
+    "suffix": "T",
+    "decimals": 1
+  },
+  "valueLabels": true,
+  "highlight": [
+    "China",
+    "United States"
+  ],
+  "categoryColors": {
+    "United States": "#1B3A5C"
+  },
+  "headline": "Adjusted for prices, China and the U.S. are still the world's two largest economies",
+  "subhead": "GDP in 2025, trillions of international dollars at purchasing power parity, top 20 economies",
+  "note": "Converted at purchasing power parity, which adjusts for differences in price levels. The US is the PPP base. Countries only; the World Bank does not report Taiwan.",
+  "sourceUrl": "https://data.worldbank.org/indicator/NY.GDP.MKTP.PP.CD",
+  "categories": [
+    "China",
+    "United States",
+    "India",
+    "Russia",
+    "Japan",
+    "Germany",
+    "Indonesia",
+    "Brazil",
+    "United Kingdom",
+    "France",
+    "Türkiye",
+    "Italy",
+    "Mexico",
+    "South Korea",
+    "Spain",
+    "Canada",
+    "Saudi Arabia",
+    "Egypt",
+    "Nigeria",
+    "Australia"
+  ],
+  "series": [
+    {
+      "name": "GDP",
+      "data": [
+        41.3,
+        30.8,
+        17.2,
+        7.2,
+        6.8,
+        6.3,
+        5.0,
+        5.0,
+        4.5,
+        4.4,
+        3.9,
+        3.7,
+        3.4,
+        3.3,
+        3.0,
+        2.8,
+        2.7,
+        2.4,
+        2.3,
+        2.0
+      ]
+    }
+  ]
+}

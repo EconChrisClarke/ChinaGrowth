@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>With exchange rate dollars, US economy is bigger. With PPP adjusted dollars, China is</title>
+<title>At market exchange rates, China and the U.S. are the world's two largest economies</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@144,700&family=Inter:wght@400;500;600;700&family=Jost:wght@600;700&display=swap" rel="stylesheet">
@@ -98,38 +98,73 @@
    ========================================================================= */
 /* CHART_CONFIG_START */
 const CHART = {
-  "type": "column",
-  "headline": "With exchange rate dollars, US economy is bigger. With PPP adjusted dollars, China is",
-  "subhead": "GDP in 2025, trillions of US dollars (exchange rate) and international dollars (PPP)",
-  "source": "World Bank, World Development Indicators (NY.GDP.MKTP.CD; NY.GDP.MKTP.PP.CD)",
-  "sourceUrl": "https://data.worldbank.org/indicator/NY.GDP.MKTP.PP.CD?locations=CN-US",
-  "note": "Exchange-rate GDP converts at market exchange rates. PPP GDP converts at purchasing power parity, adjusting for price levels; the US is the PPP base, so its two figures are identical.",
+  "source": "World Bank, World Development Indicators (NY.GDP.MKTP.CD)",
   "handle": "@EconChrisClarke",
   "xType": "category",
+  "type": "bar",
   "format": {
     "prefix": "$",
     "suffix": "T",
     "decimals": 1
   },
-  "categories": [
-    "Exchange rate",
-    "PPP"
-  ],
-  "barNames": true,
   "valueLabels": true,
+  "highlight": [
+    "China",
+    "United States"
+  ],
+  "categoryColors": {
+    "United States": "#1B3A5C"
+  },
+  "headline": "At market exchange rates, China and the U.S. are the world's two largest economies",
+  "subhead": "GDP in 2025, trillions of US dollars at market exchange rates, top 20 economies",
+  "note": "Converted to US dollars at market exchange rates. Countries only; the World Bank does not report Taiwan.",
+  "sourceUrl": "https://data.worldbank.org/indicator/NY.GDP.MKTP.CD",
+  "categories": [
+    "United States",
+    "China",
+    "Germany",
+    "Japan",
+    "United Kingdom",
+    "India",
+    "France",
+    "Russia",
+    "Italy",
+    "Canada",
+    "Brazil",
+    "Spain",
+    "South Korea",
+    "Mexico",
+    "Australia",
+    "Türkiye",
+    "Indonesia",
+    "Netherlands",
+    "Saudi Arabia",
+    "Switzerland"
+  ],
   "series": [
     {
-      "name": "China",
-      "data": [
-        19.5,
-        41.3
-      ]
-    },
-    {
-      "name": "U.S.",
+      "name": "GDP",
       "data": [
         30.8,
-        30.8
+        19.5,
+        5.1,
+        4.4,
+        4.0,
+        4.0,
+        3.4,
+        2.6,
+        2.6,
+        2.3,
+        2.3,
+        1.9,
+        1.9,
+        1.8,
+        1.8,
+        1.6,
+        1.4,
+        1.3,
+        1.3,
+        1.0
       ]
     }
   ]

@@ -1,0 +1,72 @@
+{
+  "source": "World Bank, World Development Indicators (NY.GDP.MKTP.CD)",
+  "handle": "@EconChrisClarke",
+  "xType": "category",
+  "type": "bar",
+  "format": {
+    "prefix": "$",
+    "suffix": "T",
+    "decimals": 1
+  },
+  "valueLabels": true,
+  "highlight": [
+    "China",
+    "United States"
+  ],
+  "categoryColors": {
+    "United States": "#1B3A5C"
+  },
+  "headline": "At market exchange rates, China and the U.S. are the world's two largest economies",
+  "subhead": "GDP in 2025, trillions of US dollars at market exchange rates, top 20 economies",
+  "note": "Converted to US dollars at market exchange rates. Countries only; the World Bank does not report Taiwan.",
+  "sourceUrl": "https://data.worldbank.org/indicator/NY.GDP.MKTP.CD",
+  "categories": [
+    "United States",
+    "China",
+    "Germany",
+    "Japan",
+    "United Kingdom",
+    "India",
+    "France",
+    "Russia",
+    "Italy",
+    "Canada",
+    "Brazil",
+    "Spain",
+    "South Korea",
+    "Mexico",
+    "Australia",
+    "Türkiye",
+    "Indonesia",
+    "Netherlands",
+    "Saudi Arabia",
+    "Switzerland"
+  ],
+  "series": [
+    {
+      "name": "GDP",
+      "data": [
+        30.8,
+        19.5,
+        5.1,
+        4.4,
+        4.0,
+        4.0,
+        3.4,
+        2.6,
+        2.6,
+        2.3,
+        2.3,
+        1.9,
+        1.9,
+        1.8,
+        1.8,
+        1.6,
+        1.4,
+        1.3,
+        1.3,
+        1.0
+      ]
+    }
+  ]
+}

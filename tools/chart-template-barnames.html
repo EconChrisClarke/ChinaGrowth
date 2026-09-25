@@ -122,6 +122,9 @@ const CHART = {
   xMin: null, xMax: null,       // pin the x domain (numeric axes only)
   stacked: false,                // column AND bar both honour this now
   valueLabels: 'auto',          // 'auto' | true | false
+  categoryColors: null,         // {'United States':'#1B3A5C'} — colour one
+                                // category's bars differently (column/bar,
+                                // single-series charts). Palette colours only.
   barNames: false,              // column, grouped: write each series' name in
                                 // large white type inside its bar, and drop
                                 // the legend. For charts with few, wide bars.
@@ -424,6 +427,12 @@ function wrap(ctx,text,maxW){
 }
 
 function seriesColor(i,s){ return s.color || T.palette[i % T.palette.length]; }
+/* A bar's colour: its category's override from `categoryColors`, if any,
+   otherwise its series colour. */
+function barColor(cat, se){
+  const m = CHART.categoryColors;
+  return (m && m[cat]) || seriesColor(origIndex(se), se);
+}
 
 /* A series' colour has to stay fixed to its own identity, never to its
    position in whatever filtered/windowed array happens to be on screen.
@@ -1036,7 +1045,7 @@ function draw(ctx, W, H, P, opts){
         const v = +se.data[origI]||0;
         const cat = CHART.categories[origI];
         const hi = isHi(cat, origI);
-        const col = emphasise(seriesColor(origIndex(se),se), hi, false);
+        const col = emphasise(barColor(cat, se), hi, false);
         let y0,y1,x0,w;
         if(CHART.stacked){
           const base = v>=0 ? tops[i] : bots[i];
@@ -1052,7 +1061,9 @@ function draw(ctx, W, H, P, opts){
         ctx.roundRect(x0, Math.min(y0,y1), w, Math.max(Math.abs(y1-y0),1), 2*s);
         ctx.fill();
         HIT.push({x:x0+w/2, y:Math.min(y0,y1), cx:x0+w/2, cy:(y0+y1)/2,
-                  v:v, cat:cat, key:cat, color:col});
+                  v:v, cat:cat, key:cat, color:col,
+                  band:{axis:'x', a:X(i)-slot/2, b:X(i)+slot/2, lo:pT, hi:pB+T.szAxis*s*2},
+                  box:{x0:x0, x1:x0+w, y0:Math.min(y0,y1), y1:Math.max(y0,y1)}});
         /* Series name inside the bar, replacing the legend. Sized to the bar's
            width, capped at headline size; skipped if the bar is too short. */
         if(CHART.barNames && CHART.type==='column' && !CHART.stacked && v>0){
@@ -1562,7 +1573,7 @@ function drawHBars(ctx, P, L, R, innerW, pT, pB){
       S.forEach((se)=>{
         const v = +se.data[origI]||0;
         const hi = isHi(c, origI);
-        const col = emphasise(seriesColor(origIndex(se),se), hi, false);
+        const col = emphasise(barColor(c, se), hi, false);
         const base = v>=0 ? pos : neg;
         if(v>=0) pos+=v; else neg+=v;
         const x0 = X(Math.min(base, base+v)), x1 = X(Math.max(base, base+v));
@@ -1571,13 +1582,15 @@ function drawHBars(ctx, P, L, R, innerW, pT, pB){
         ctx.roundRect(x0, by, Math.max(x1-x0,1), barH*0.86, 2*s);
         ctx.fill();
         HIT.push({x:(v<0?x0:x1), y:by+barH*0.43, cx:(x0+x1)/2, cy:by+barH*0.43,
-                  v:v, cat:c, key:c, color:col});
+                  v:v, cat:c, key:c, color:col,
+                  band:{axis:'y', a:cy-rowH/2, b:cy+rowH/2, lo:L, hi:R},
+                  box:{x0:x0, x1:x1, y0:by, y1:by+barH*0.86}});
       });
     } else {
       S.forEach((se,si)=>{
         const v = +se.data[origI]||0;
         const hi = isHi(c, origI);
-        const col = emphasise(seriesColor(origIndex(se),se), hi, false);
+        const col = emphasise(barColor(c, se), hi, false);
         const by = cy - (nS*barH)/2 + si*barH;
         const x0 = Math.min(zero, X(v)), w = Math.max(Math.abs(X(v)-zero), 1);
         ctx.fillStyle = col;
@@ -1593,7 +1606,9 @@ function drawHBars(ctx, P, L, R, innerW, pT, pB){
         ctx.textAlign = 'left';
 
         HIT.push({x:(v<0?x0:x0+w), y:by+barH*0.43, cx:x0+w/2, cy:by+barH*0.43,
-                  v:v, cat:c, key:c, color:col});
+                  v:v, cat:c, key:c, color:col,
+                  band:{axis:'y', a:cy-rowH/2, b:cy+rowH/2, lo:L, hi:R},
+                  box:{x0:x0, x1:x0+w, y0:by, y1:by+barH*0.86}});
       });
     }
   });
@@ -2000,7 +2015,9 @@ function tooltip(e){
   const k = curW / r.width;
   const mx = (cx-r.left)*k, my = (cy-r.top)*k;
   let best=null, bd=1e9;
-  HIT.forEach(h=>{ const d=Math.hypot(h.x-mx,(h.y-my)*0.55); if(d<bd){bd=d;best=h;} });
+  const bar = pickBar(mx, my);
+  if(bar !== undefined){ best = bar; bd = bar ? 0 : 1e9; }
+  else HIT.forEach(h=>{ const d=Math.hypot(h.x-mx,(h.y-my)*0.55); if(d<bd){bd=d;best=h;} });
   render();
   if(!best || bd > 70) return;
   const s = PRESETS[MODE].s;
@@ -2366,6 +2383,28 @@ document.getElementById('cpdata').addEventListener('click', function(){
    eye — which bar makes the point is usually obvious only once the chart is
    drawn — so it belongs here rather than requiring a rebuild. The exports read
    the same state, so what's on screen is what downloads. */
+/* Which bar is under the pointer. Nearest-centre-point does not work for
+   bars: a long bar's centre sits far from its own ends, so clicking the tip of
+   China's bar could land nearer the centre of a short bar a row away. Instead
+   a bar owns its whole row (horizontal) or slot (column), label included.
+   Within a row holding several series, the bar under the pointer wins, then
+   the nearest one. Returns undefined when the chart has no banded marks, so
+   callers fall back to the nearest-point search used for lines and scatter. */
+function pickBar(mx, my){
+  const banded = HIT.filter(h => h.band);
+  if(!banded.length) return undefined;
+  const inRow = banded.filter(h => {
+    const along = h.band.axis==='y' ? my : mx, across = h.band.axis==='y' ? mx : my;
+    return along >= h.band.a && along <= h.band.b && across >= h.band.lo && across <= h.band.hi;
+  });
+  if(!inRow.length) return null;
+  const inside = inRow.filter(h => mx>=h.box.x0 && mx<=h.box.x1 && my>=h.box.y0 && my<=h.box.y1);
+  if(inside.length) return inside[0];
+  let best = null, bd = 1e9;
+  inRow.forEach(h => { const d = Math.hypot(h.cx-mx, h.cy-my); if(d<bd){ bd=d; best=h; } });
+  return best;
+}
+
 function toggleHi(e){
   if(CHART.type === 'panels') return;   // no highlight state wired up for panels yet
   const r = cv.getBoundingClientRect();
@@ -2377,6 +2416,8 @@ function toggleHi(e){
     mx >= l.x0 && mx <= l.x1 && my >= l.y0 && my <= l.y1)[0];
   if(onLegend){ toggleKey(onLegend.key); return; }
 
+  const bar = pickBar(mx, my);
+  if(bar !== undefined){ if(bar) toggleKey(bar.key); return; }
   let best = null, bd = 1e9;
   HIT.forEach(h=>{
     const hx = h.cx===undefined ? h.x : h.cx;
